@@ -1,401 +1,315 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { calculatePlacements, type BirthProfile, type Placement } from "./chart";
+import { useEffect, useMemo, useState } from "react";
 
-const sections = [
-  { id: "dashboard", label: "Today", detail: "Current work", group: "Start" },
-  { id: "profile", label: "Birth Data", detail: "Date, time, place", group: "Chart work" },
-  { id: "chart", label: "Natal Chart", detail: "Placements and balance", group: "Chart work" },
-  { id: "timing", label: "Timing", detail: "Transits and aspects", group: "Chart work" },
-  { id: "journal", label: "Journal", detail: "Notes and observations", group: "Interpretation" },
-  { id: "clients", label: "Clients", detail: "Practice records", group: "Practice" },
-  { id: "reports", label: "Reports", detail: "Client-ready output", group: "Practice" },
-  { id: "privacy", label: "Data", detail: "Export and permissions", group: "Practice" }
-] as const;
+type Surface = {
+  name: string;
+  role: string;
+  url: string;
+  repo: string;
+  vercel: string;
+};
 
-type SectionId = (typeof sections)[number]["id"];
-type NoteDraft = { title: string; body: string };
-type ClientDraft = { name: string; email: string };
+type AdminSection = "overview" | "surfaces" | "billing" | "analytics" | "users" | "pricing" | "content" | "events";
+type BillingSummary = {
+  connected: boolean;
+  currency: string;
+  customers: Array<{ id: string; name: string; email: string; created: number }>;
+  subscriptions: Array<{ id: string; customer: string; status: string; created: number; currentPeriodEnd: number | null; amount: number; interval: string }>;
+  payments: Array<{ id: string; status: string; amount: number; created: number; customer: string }>;
+  totals: { customers: number; activeSubscriptions: number; monthlyRecurring: number; paidVolume: number };
+};
+
+const sections: Array<[AdminSection, string, string]> = [
+  ["overview", "overview", "current state across dream logic"],
+  ["surfaces", "sites", "landing, web app, and admin links"],
+  ["billing", "buyers", "plans, purchases, and subscriptions"],
+  ["analytics", "analytics", "traffic, conversion, and product signals"],
+  ["users", "users", "accounts, access, and subscriptions"],
+  ["pricing", "pricing", "plans and revenue model"],
+  ["content", "content", "reports, glossary, media, and copy"],
+  ["events", "events", "product events to track"]
+];
 
 const plans = [
-  ["Free", "Single chart, basic natal placements, private journal"],
-  ["Seeker", "Multiple charts, timing watch, relationship comparison"],
-  ["Depth", "Returns, profections, collections, saved interpretations"],
-  ["Practitioner", "Clients, session prep, consent, branded reports"],
-  ["Practice", "Team roles, shared client library, reporting"],
-  ["Research", "Datasets, bulk calculations, structured exports"]
-] as const;
+  ["free", "$0", "one chart, saved basics, beginner glossary"],
+  ["seeker", "$9/mo", "multiple charts, timing, journal, relationship notes"],
+  ["depth", "$19/mo", "returns, profections, collections, deeper timing"],
+  ["practitioner", "$39/mo", "clients, private notes, branded reports"],
+  ["practice", "$89/mo", "team access, shared clients, practice analytics"],
+  ["research", "$149/mo", "bulk calculations, datasets, exports"]
+];
+
+const events = [
+  ["landing_view", "visitor opens landing page"],
+  ["open_app_click", "visitor moves from landing to web app"],
+  ["birth_profile_saved", "user saves birth data"],
+  ["chart_opened", "user opens calculated chart"],
+  ["mode_changed", "user changes beginner or expert mode"],
+  ["plan_selected", "user chooses a subscription tier"],
+  ["report_prepared", "user prepares a report"]
+];
+
+const contentAreas = [
+  ["brand assets", "logos, videos, constellation imagery, report preview"],
+  ["glossary", "natal chart, element balance, modality balance, retrograde, time certainty"],
+  ["report copy", "birth profile, interpretation, practice notes"],
+  ["pricing copy", "plan names, price points, and feature access"],
+  ["media order", "ad one stands alone; ad two opens when paired"]
+];
 
 export function Workbench() {
-  const [active, setActive] = useState<SectionId>("dashboard");
-  const [profile, setProfile] = useState<BirthProfile>({
-    name: "Primary chart",
-    birthDate: "1994-06-17",
-    birthTime: "09:30",
-    birthTimeCertainty: "official_recorded",
-    locationLabel: "Lagos, Nigeria"
-  });
-  const [journal, setJournal] = useState<NoteDraft[]>([
-    { title: "Transit note", body: "Track what happened beside the calculated timing so the reading keeps its human context." }
-  ]);
-  const [clients, setClients] = useState<ClientDraft[]>([
-    { name: "Consultation client", email: "client@example.com" }
-  ]);
-  const [draft, setDraft] = useState<NoteDraft>({ title: "", body: "" });
-  const [clientDraft, setClientDraft] = useState<ClientDraft>({ name: "", email: "" });
+  const [active, setActive] = useState<AdminSection>("overview");
+  const [billing, setBilling] = useState<BillingSummary | null>(null);
+  const [billingError, setBillingError] = useState("");
+  const landingUrl = process.env.NEXT_PUBLIC_LANDING_URL ?? "https://dreamlogic-landingpage.vercel.app";
+  const webappUrl = process.env.NEXT_PUBLIC_WEBAPP_URL ?? "https://dreamlogic-webapp.vercel.app";
+  const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL ?? "https://dreamlogic-admin.vercel.app";
 
-  const placements = useMemo(() => calculatePlacements(profile), [profile]);
-  const activeSection = sections.find((section) => section.id === active) ?? sections[0];
-  const elementCounts = useMemo(() => getCounts(placements, "element"), [placements]);
-  const modalityCounts = useMemo(() => getCounts(placements, "modality"), [placements]);
-  const topAspects = useMemo(() => getTopAspects(placements), [placements]);
-  const moon = placements.find((placement) => placement.body === "Moon");
-  const mercury = placements.find((placement) => placement.body === "Mercury");
-  const navGroups = Array.from(new Set(sections.map((section) => section.group)));
+  const surfaces = useMemo<Surface[]>(() => [
+    {
+      name: "landing",
+      role: "public pitch, pricing, media, investors",
+      url: landingUrl,
+      repo: "https://github.com/Oyewolesyl/dreamlogic-landingpage",
+      vercel: "https://vercel.com/dashboard"
+    },
+    {
+      name: "web app",
+      role: "user astrology workspace",
+      url: webappUrl,
+      repo: "https://github.com/Oyewolesyl/dreamlogic-webapp",
+      vercel: "https://vercel.com/dashboard"
+    },
+    {
+      name: "admin",
+      role: "private management dashboard",
+      url: adminUrl,
+      repo: "https://github.com/Oyewolesyl/dreamlogic",
+      vercel: "https://vercel.com/dashboard"
+    }
+  ], [adminUrl, landingUrl, webappUrl]);
 
-  const saveJournal = () => {
-    if (!draft.title.trim() || !draft.body.trim()) return;
-    setJournal([{ title: draft.title.trim(), body: draft.body.trim() }, ...journal]);
-    setDraft({ title: "", body: "" });
-  };
+  const activeLabel = sections.find(([key]) => key === active)?.[1] ?? "overview";
 
-  const saveClient = () => {
-    if (!clientDraft.name.trim() || !clientDraft.email.trim()) return;
-    setClients([{ name: clientDraft.name.trim(), email: clientDraft.email.trim() }, ...clients]);
-    setClientDraft({ name: "", email: "" });
-  };
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/billing/summary")
+      .then((response) => response.ok ? response.json() : Promise.reject(new Error("billing unavailable")))
+      .then((data: BillingSummary) => {
+        if (!cancelled) setBilling(data);
+      })
+      .catch(() => {
+        if (!cancelled) setBillingError("billing data could not be loaded");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
-    <section className="application-frame" id="workspace">
-      <header className="suite-header">
-        <a className="suite-logo" href="#workspace" aria-label="Dream Logic">
-          <img alt="Dream Logic" src="/brand/logomain.svg" />
-        </a>
-        <div className="suite-summary">
-          <p className="kicker">Astrology workspace</p>
-          <h1>{profile.name}</h1>
-          <p>{profile.birthDate} / {profile.birthTime} / {profile.locationLabel}</p>
+    <section className="admin-frame">
+      <aside className="admin-sidebar">
+        <div className="admin-brand">
+          <img src="/brand/logomain.svg" alt="dream logic" />
+          <p>private admin</p>
         </div>
-        <div className="suite-actions" aria-label="Primary workflow shortcuts">
-          <button type="button" onClick={() => setActive("profile")}>Edit birth data</button>
-          <button type="button" onClick={() => setActive("chart")}>Open chart</button>
-          <button type="button" onClick={() => setActive("reports")}>Prepare report</button>
-        </div>
-      </header>
-
-      <div className="product-shell">
-        <aside className="product-nav" aria-label="Dream Logic workspace sections">
-          {navGroups.map((group) => (
-            <div className="nav-group" key={group}>
-              <p>{group}</p>
-              <div className="nav-list">
-                {sections.filter((section) => section.group === group).map((section) => (
-                  <button
-                    key={section.id}
-                    className="nav-button"
-                    data-active={active === section.id}
-                    onClick={() => setActive(section.id)}
-                    type="button"
-                  >
-                    <strong>{section.label}</strong>
-                    <small>{section.detail}</small>
-                  </button>
-                ))}
-              </div>
-            </div>
+        <nav aria-label="admin sections">
+          {sections.map(([key, label, detail]) => (
+            <button className={active === key ? "active" : ""} key={key} onClick={() => setActive(key)} type="button">
+              <span>{label}</span>
+              <small>{detail}</small>
+            </button>
           ))}
-        </aside>
+        </nav>
+      </aside>
 
-        <section className="product-stage" aria-live="polite">
-          <header className="stage-heading">
-            <div>
-              <p className="kicker">{activeSection.group}</p>
-              <h2>{activeSection.label}</h2>
-            </div>
-            <p>{activeSection.detail}</p>
-          </header>
-
-          {active === "dashboard" && (
-            <div className="dashboard-grid">
-              <article className="feature-panel next-step">
-                <p className="kicker">Workflow</p>
-                <h3>Start with the chart. Finish with the report.</h3>
-                <ol className="workflow-list">
-                  <li>Confirm birth data</li>
-                  <li>Read natal placements</li>
-                  <li>Check timing and aspects</li>
-                  <li>Save notes</li>
-                  <li>Prepare report</li>
-                </ol>
-                <div className="inline-actions">
-                  <button type="button" onClick={() => setActive("profile")}>Birth data</button>
-                  <button type="button" onClick={() => setActive("chart")}>Natal chart</button>
-                </div>
-              </article>
-              <Metric label="Profiles" value="1" body="Active chart loaded." />
-              <Metric label="Placements" value={String(placements.length)} body="Sun through Pluto calculated." />
-              <Metric label="Notes" value={String(journal.length)} body="Interpretation notes saved." />
-              <article className="feature-panel chart-summary">
-                <div>
-                  <p className="kicker">Active chart</p>
-                  <h3>{profile.name}</h3>
-                  <p>{profile.birthDate} at {profile.birthTime} in {profile.locationLabel}</p>
-                </div>
-                <div className="summary-rows">
-                  <SummaryRow label="Moon" value={moon ? formatPlacement(moon) : "Calculating"} />
-                  <SummaryRow label="Mercury" value={mercury ? formatPlacement(mercury) : "Calculating"} />
-                  <SummaryRow label="Time certainty" value={profile.birthTimeCertainty.replaceAll("_", " ")} />
-                </div>
-              </article>
-            </div>
-          )}
-
-        {active === "profile" && (
-          <div className="form-panel">
-            <Field label="Profile name" value={profile.name} onChange={(name) => setProfile({ ...profile, name })} />
-            <Field label="Birth date" type="date" value={profile.birthDate} onChange={(birthDate) => setProfile({ ...profile, birthDate })} />
-            <Field label="Birth time" type="time" value={profile.birthTime} onChange={(birthTime) => setProfile({ ...profile, birthTime })} />
-            <label className="field">
-              <span>Birth-time certainty</span>
-              <select value={profile.birthTimeCertainty} onChange={(event) => setProfile({ ...profile, birthTimeCertainty: event.target.value as BirthProfile["birthTimeCertainty"] })}>
-                <option value="official_recorded">Official recorded time</option>
-                <option value="family_reported">Family-reported time</option>
-                <option value="approximate">Approximate</option>
-                <option value="rectified">Rectified</option>
-                <option value="unknown">Unknown</option>
-              </select>
-            </label>
-            <Field label="Birth location" value={profile.locationLabel} onChange={(locationLabel) => setProfile({ ...profile, locationLabel })} />
-            <div className="certainty-panel">
-              <strong>Unknown-time safeguard</strong>
-              <p>When birth time is unknown, Dream Logic calculates from noon and keeps time-sensitive interpretation clearly separated.</p>
-            </div>
+      <main className="admin-main">
+        <header className="admin-header">
+          <div>
+            <p>dream logic control panel</p>
+            <h1>{activeLabel}</h1>
           </div>
-        )}
-
-        {active === "chart" && (
-          <div className="stage-stack">
-            <div className="chart-layout">
-              <article className="feature-panel">
-                <p className="kicker">Element balance</p>
-                <Balance counts={elementCounts} />
-              </article>
-              <article className="feature-panel">
-                <p className="kicker">Modality balance</p>
-                <Balance counts={modalityCounts} />
-              </article>
-            </div>
-            <div className="placement-table">
-              {placements.map((placement) => (
-                <article key={placement.body}>
-                  <strong>{placement.body}</strong>
-                  <span>{placement.degree} deg {placement.minute}' {placement.sign}</span>
-                  <small>{placement.element} / {placement.modality}{placement.retrograde ? " / Rx" : ""}</small>
-                </article>
-              ))}
-            </div>
+          <div className="admin-actions">
+            <a href={landingUrl}>open landing</a>
+            <a href={webappUrl}>open app</a>
           </div>
-        )}
+        </header>
 
-        {active === "timing" && (
-          <div className="dashboard-grid">
-            <article className="feature-panel wide">
-              <p className="kicker">Major aspects</p>
-              <div className="aspect-list">
-                {topAspects.map((aspect) => (
-                  <span key={`${aspect.from}-${aspect.to}-${aspect.type}`}>{aspect.from} {aspect.type} {aspect.to} / {aspect.orb} orb</span>
-                ))}
-              </div>
+        {active === "overview" && (
+          <div className="admin-grid">
+            <Metric value="3" label="surfaces" body="landing, web app, and private admin are split." />
+            <Metric value="6" label="plans" body="free through research pricing is represented." />
+            <Metric value={String(billing?.totals.activeSubscriptions ?? 0)} label="active subs" body={billing?.connected ? "live stripe subscription count." : "connect stripe to load real buyers."} />
+            <article className="admin-card wide">
+              <p className="eyebrow">operating model</p>
+              <h2>landing sells, web app serves, admin manages</h2>
+              <p>the public sites link to each other. the admin remains private and gives you one place to check links, pricing, analytics targets, content areas, and product events.</p>
             </article>
-            {placements.slice(0, 6).map((placement) => (
-              <Info
-                key={placement.body}
-                title={`${placement.body} in ${placement.sign}`}
-                body={`Watch exact contacts to ${placement.degree} deg ${placement.sign}, then connect dates to journal notes and client sessions.`}
-              />
+          </div>
+        )}
+
+        {active === "surfaces" && (
+          <div className="surface-list">
+            {surfaces.map((surface) => (
+              <article className="admin-card surface-card" key={surface.name}>
+                <p className="eyebrow">{surface.name}</p>
+                <h2>{surface.role}</h2>
+                <div className="link-row">
+                  <a href={surface.url}>open site</a>
+                  <a href={surface.repo}>github</a>
+                  <a href={surface.vercel}>vercel</a>
+                </div>
+                <small>{surface.url}</small>
+              </article>
             ))}
           </div>
         )}
 
-        {active === "journal" && (
-          <NoteComposer title="Journal entry" first="Title" second="Reflection" values={draft} setValues={setDraft} onSave={saveJournal} items={journal} />
-        )}
-
-        {active === "clients" && (
-          <ClientComposer
-            title="Client record"
-            first="Client name"
-            second="Email"
-            values={clientDraft}
-            setValues={setClientDraft}
-            onSave={saveClient}
-            items={clients.map((client) => ({ title: client.name, body: client.email }))}
-          />
-        )}
-
-        {active === "reports" && (
-          <article className="report-panel" id="report">
-            <div className="report-cover">
-              <img alt="Dream Logic Astrology suite" src="/brand/fulllitelogo.svg" />
-            </div>
-            <div className="report-body">
-              <p className="kicker">Natal report</p>
-              <h3>{profile.name}</h3>
-              <p>{placements.length} placements, element balance, aspect highlights, journal context, and practitioner notes are ready for a polished report.</p>
-              <div className="report-actions">
-                <span>Birth profile</span>
-                <span>Interpretation</span>
-                <span>Practice notes</span>
-              </div>
-              <img className="report-specimen" alt="Approved Dream Logic light report direction" src="/brand/logo-direction-primary-light.jpg" />
-            </div>
-          </article>
-        )}
-
-        {active === "privacy" && (
-          <div className="dashboard-grid">
-            <Info title="Data export" body="Download chart, journal, client, and report records from the workspace." />
-            <Info title="Context permissions" body="Private text stays out of generated interpretation until permission is granted." />
-            <Info title="Practitioner access" body="Client-visible notes and practitioner-private notes remain separated." />
-            <Info title="Subscriptions" body={plans.map(([name]) => name).join(" / ")} />
+        {active === "billing" && (
+          <div className="admin-grid">
+            <Metric value={String(billing?.totals.customers ?? 0)} label="buyers" body={billing?.connected ? "customers loaded from stripe." : "set STRIPE_SECRET_KEY in vercel."} />
+            <Metric value={String(billing?.totals.activeSubscriptions ?? 0)} label="active subscriptions" body="paid plans currently active." />
+            <Metric value={money(billing?.totals.monthlyRecurring ?? 0)} label="monthly recurring" body="active subscription value from stripe prices." />
+            <Metric value={money(billing?.totals.paidVolume ?? 0)} label="paid volume" body="succeeded payment volume in latest stripe window." />
+            <article className="admin-card wide">
+              <p className="eyebrow">billing connection</p>
+              <h2>{billing?.connected ? "stripe is connected" : "stripe is not connected yet"}</h2>
+              <p>{billing?.connected ? "customers, subscriptions, and payments below are live stripe records." : "add STRIPE_SECRET_KEY to the admin vercel project to show actual buyers, purchases, and subscriptions here."}</p>
+              {billingError && <p>{billingError}</p>}
+            </article>
+            <DataTable
+              title="subscriptions"
+              rows={(billing?.subscriptions ?? []).map((subscription) => [
+                subscription.status,
+                money(subscription.amount),
+                subscription.interval,
+                subscription.customer
+              ])}
+              empty="no subscriptions loaded"
+            />
+            <DataTable
+              title="payments"
+              rows={(billing?.payments ?? []).map((payment) => [
+                payment.status,
+                money(payment.amount),
+                date(payment.created),
+                payment.customer
+              ])}
+              empty="no payments loaded"
+            />
+            <DataTable
+              title="customers"
+              rows={(billing?.customers ?? []).map((customer) => [
+                customer.name,
+                customer.email,
+                date(customer.created),
+                customer.id
+              ])}
+              empty="no customers loaded"
+            />
           </div>
         )}
-        </section>
-      </div>
+
+        {active === "analytics" && (
+          <div className="admin-grid">
+            <article className="admin-card wide">
+              <p className="eyebrow">analytics setup</p>
+              <h2>what this admin should watch</h2>
+              <p>traffic should be read by surface: landing visits, app opens, pricing clicks, chart starts, report preparation, account attempts, and plan selection.</p>
+              <div className="link-row">
+                <a href="https://vercel.com/dashboard">open vercel analytics</a>
+                <button type="button" onClick={() => setActive("events")}>view event map</button>
+              </div>
+            </article>
+            <Metric value="landing" label="first question" body="are people moving from pitch to app?" />
+            <Metric value="app" label="second question" body="are people saving birth data and opening charts?" />
+            <Metric value="pricing" label="third question" body="which plan gets selected most often?" />
+          </div>
+        )}
+
+        {active === "users" && (
+          <div className="admin-grid">
+            <Metric value="free" label="default access" body="one chart and beginner glossary." />
+            <Metric value="seeker" label="first paid tier" body="multiple charts, timing, and journal links." />
+            <Metric value="practice" label="team tier" body="client records and shared workflows." />
+            <article className="admin-card wide">
+              <p className="eyebrow">access model</p>
+              <h2>accounts belong in the web app, oversight belongs here</h2>
+              <p>this admin panel is structured for subscription oversight, support checks, access review, and operational links. production account storage still needs the chosen auth and database providers.</p>
+            </article>
+          </div>
+        )}
+
+        {active === "pricing" && (
+          <div className="plan-grid">
+            {plans.map(([name, price, detail]) => (
+              <article className="admin-card" key={name}>
+                <p className="eyebrow">{name}</p>
+                <h2>{price}</h2>
+                <p>{detail}</p>
+              </article>
+            ))}
+          </div>
+        )}
+
+        {active === "content" && (
+          <div className="surface-list">
+            {contentAreas.map(([name, detail]) => (
+              <article className="admin-card" key={name}>
+                <p className="eyebrow">{name}</p>
+                <h2>{detail}</h2>
+              </article>
+            ))}
+          </div>
+        )}
+
+        {active === "events" && (
+          <div className="surface-list">
+            {events.map(([name, detail]) => (
+              <article className="admin-card event-card" key={name}>
+                <strong>{name}</strong>
+                <span>{detail}</span>
+              </article>
+            ))}
+          </div>
+        )}
+      </main>
     </section>
   );
 }
 
-const zodiacOffset = (sign: string): number => {
-  const signs = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
-  return signs.indexOf(sign) * 30;
-};
-
-function getCounts(placements: Placement[], key: "element" | "modality") {
-  return placements.reduce<Record<string, number>>((acc, placement) => {
-    acc[placement[key]] = (acc[placement[key]] ?? 0) + 1;
-    return acc;
-  }, {});
-}
-
-function getTopAspects(placements: Placement[]) {
-  const pairs: Array<{ from: string; to: string; type: string; orb: string }> = [];
-  const aspectAngles = [
-    ["Conjunction", 0, 8],
-    ["Sextile", 60, 4],
-    ["Square", 90, 6],
-    ["Trine", 120, 6],
-    ["Opposition", 180, 8]
-  ] as const;
-
-  for (let i = 0; i < placements.length; i += 1) {
-    for (let j = i + 1; j < placements.length; j += 1) {
-      const a = placements[i];
-      const b = placements[j];
-      const separation = Math.abs(180 - Math.abs(Math.abs(a.degree + zodiacOffset(a.sign) - (b.degree + zodiacOffset(b.sign))) - 180));
-      for (const [type, angle, maxOrb] of aspectAngles) {
-        const orb = Math.abs(separation - angle);
-        if (orb <= maxOrb) pairs.push({ from: a.body, to: b.body, type, orb: orb.toFixed(1) });
-      }
-    }
-  }
-  return pairs.slice(0, 6);
-}
-
-function formatPlacement(placement: Placement) {
-  return `${placement.degree} deg ${placement.minute}' ${placement.sign}`;
-}
-
-function SummaryRow({ label, value }: { label: string; value: string }) {
-  return <p><span>{label}</span><strong>{value}</strong></p>;
-}
-
-function Balance({ counts }: { counts: Record<string, number> }) {
+function Metric({ value, label, body }: { value: string; label: string; body: string }) {
   return (
-    <div className="balance-row">
-      {Object.entries(counts).map(([name, count]) => (
-        <span key={name}><strong>{count}</strong>{name}</span>
-      ))}
-    </div>
+    <article className="admin-card metric">
+      <strong>{value}</strong>
+      <span>{label}</span>
+      <p>{body}</p>
+    </article>
   );
 }
 
-function Field({ label, value, onChange, type = "text" }: { label: string; value: string; onChange: (value: string) => void; type?: string }) {
-  return <label className="field"><span>{label}</span><input type={type} value={value} onChange={(event) => onChange(event.target.value)} /></label>;
-}
-
-function Metric({ label, value, body }: { label: string; value: string; body: string }) {
-  return <article className="metric-card"><strong>{value}</strong><span>{label}</span><p>{body}</p></article>;
-}
-
-function Info({ title, body }: { title: string; body: string }) {
-  return <article className="feature-panel"><h3>{title}</h3><p>{body}</p></article>;
-}
-
-function NoteComposer({
-  title,
-  first,
-  second,
-  values,
-  setValues,
-  onSave,
-  items
-}: {
-  title: string;
-  first: string;
-  second: string;
-  values: NoteDraft;
-  setValues: (value: NoteDraft) => void;
-  onSave: () => void;
-  items: NoteDraft[];
-}) {
+function DataTable({ title, rows, empty }: { title: string; rows: string[][]; empty: string }) {
   return (
-    <div className="stage-stack">
-      <div className="form-panel">
-        <h3>{title}</h3>
-        <Field label={first} value={values.title} onChange={(value) => setValues({ ...values, title: value })} />
-        <label className="field">
-          <span>{second}</span>
-          <textarea value={values.body} onChange={(event) => setValues({ ...values, body: event.target.value })} />
-        </label>
-        <button className="primary-action" onClick={onSave} type="button">Save</button>
-      </div>
-      <div className="dashboard-grid">
-        {items.map((item) => <article className="feature-panel" key={`${item.title}-${item.body}`}><h3>{item.title}</h3><p>{item.body}</p></article>)}
-      </div>
-    </div>
+    <article className="admin-card data-card wide">
+      <p className="eyebrow">{title}</p>
+      {rows.length === 0 ? <p>{empty}</p> : (
+        <div className="data-list">
+          {rows.map((row) => (
+            <div className="data-row" key={row.join("-")}>
+              {row.map((cell) => <span key={cell}>{cell}</span>)}
+            </div>
+          ))}
+        </div>
+      )}
+    </article>
   );
 }
 
-function ClientComposer({
-  title,
-  first,
-  second,
-  values,
-  setValues,
-  onSave,
-  items
-}: {
-  title: string;
-  first: string;
-  second: string;
-  values: ClientDraft;
-  setValues: (value: ClientDraft) => void;
-  onSave: () => void;
-  items: NoteDraft[];
-}) {
-  return (
-    <div className="stage-stack">
-      <div className="form-panel">
-        <h3>{title}</h3>
-        <Field label={first} value={values.name} onChange={(value) => setValues({ ...values, name: value })} />
-        <Field label={second} value={values.email} onChange={(value) => setValues({ ...values, email: value })} />
-        <button className="primary-action" onClick={onSave} type="button">Save</button>
-      </div>
-      <div className="dashboard-grid">
-        {items.map((item) => <article className="feature-panel" key={`${item.title}-${item.body}`}><h3>{item.title}</h3><p>{item.body}</p></article>)}
-      </div>
-    </div>
-  );
+function money(cents: number) {
+  return `$${(cents / 100).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
+}
+
+function date(seconds: number) {
+  return new Date(seconds * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }).toLowerCase();
 }

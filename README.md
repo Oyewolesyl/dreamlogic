@@ -21,9 +21,15 @@ set these environment variables in vercel:
 ```txt
 DREAMLOGIC_ADMIN_PASSWORD=your password
 DREAMLOGIC_ADMIN_SECRET=any long random secret
+STRIPE_SECRET_KEY=your stripe secret key
+NEXT_PUBLIC_LANDING_URL=https://your-landing-domain
+NEXT_PUBLIC_WEBAPP_URL=https://your-webapp-domain
+NEXT_PUBLIC_ADMIN_URL=https://your-admin-domain
 ```
 
 do not commit the password or secret to git.
+
+`STRIPE_SECRET_KEY` is required for the admin buyers section to show real customers, purchases, subscriptions, recurring revenue, and paid volume.
 
 ## local setup
 
