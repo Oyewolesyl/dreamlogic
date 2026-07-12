@@ -31,6 +31,16 @@ do not commit the password or secret to git.
 
 `STRIPE_SECRET_KEY` is required for the admin buyers section to show real customers, purchases, subscriptions, recurring revenue, and paid volume.
 
+## full backend setup
+
+read `BACKEND_SETUP.md` for the complete beginner setup:
+
+- where to get the stripe secret key.
+- which vercel project gets each environment variable.
+- how to create stripe products, prices, and webhooks.
+- how to create the supabase database.
+- which secrets must never go into the public landing page.
+
 ## local setup
 
 from the admin app:
