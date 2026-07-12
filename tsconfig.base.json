@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "@dream-logic/brand": ["packages/brand/src"],
+      "@dream-logic/design-tokens": ["packages/design-tokens/src"],
+      "@dream-logic/glyphs": ["packages/glyphs/src"],
+      "@dream-logic/astrology-domain": ["packages/astrology-domain/src"],
+      "@dream-logic/subscriptions": ["packages/subscriptions/src"]
+    }
+  }
+}

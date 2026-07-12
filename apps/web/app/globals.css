@@ -1,0 +1,240 @@
+:root {
+  --dl-black: #171717;
+  --dl-black-deep: #0d0d0e;
+  --dl-white: #f7f7f4;
+  --dl-cream: #f0ece4;
+  --dl-parchment: #ded4c1;
+  --dl-midnight: #07152f;
+  --dl-blue: #1254a8;
+  --dl-blue-bright: #2467cb;
+  --dl-blue-soft: #86a8e5;
+  --dl-yellow: #f5c21c;
+  --dl-red: #e51d2a;
+  --dl-orange: #d96a32;
+  --dl-bronze: #bd6a42;
+  --dl-brown: #3c1713;
+  --dl-bg: var(--dl-black-deep);
+  --dl-surface: var(--dl-black);
+  --dl-raised: #202021;
+  --dl-text: #f5f5f2;
+  --dl-muted: #b5b2aa;
+  --dl-border: rgba(255, 255, 255, 0.12);
+  --dl-accent: var(--dl-yellow);
+  --dl-accent-2: var(--dl-blue-bright);
+}
+
+[data-theme="light"] {
+  --dl-bg: var(--dl-white);
+  --dl-surface: var(--dl-cream);
+  --dl-raised: #ffffff;
+  --dl-text: var(--dl-black);
+  --dl-muted: #6f7075;
+  --dl-border: rgba(23, 23, 23, 0.14);
+  --dl-accent: var(--dl-red);
+  --dl-accent-2: var(--dl-blue);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--dl-bg);
+  color: var(--dl-text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    var(--dl-bg);
+  background-size: 32px 32px;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.shell {
+  display: grid;
+  min-height: 100vh;
+  grid-template-columns: 280px minmax(0, 1fr);
+}
+
+.sidebar {
+  border-right: 1px solid var(--dl-border);
+  padding: 28px 20px;
+  background: rgba(13, 13, 14, 0.82);
+}
+
+.logo-lockup {
+  display: block;
+  width: 174px;
+  height: auto;
+  margin-bottom: 36px;
+}
+
+.nav-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  color: var(--dl-muted);
+}
+
+.nav-item[data-active="true"] {
+  border-color: var(--dl-border);
+  background: var(--dl-raised);
+  color: var(--dl-text);
+}
+
+.main {
+  padding: 36px;
+}
+
+.band {
+  border-block: 1px solid var(--dl-border);
+  padding: 32px 0;
+}
+
+.grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.panel {
+  border: 1px solid var(--dl-border);
+  background: rgba(32, 32, 33, 0.74);
+  padding: 18px;
+}
+
+.panel h3,
+.panel p {
+  margin: 0;
+}
+
+.panel p {
+  color: var(--dl-muted);
+  line-height: 1.55;
+}
+
+.eyebrow {
+  color: var(--dl-accent);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.headline {
+  max-width: 900px;
+  margin: 12px 0 20px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.25rem, 6vw, 5.25rem);
+  line-height: 0.96;
+  letter-spacing: 0;
+}
+
+.copy {
+  max-width: 720px;
+  color: var(--dl-muted);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--dl-border);
+  background: var(--dl-accent);
+  color: #171717;
+  font-weight: 700;
+}
+
+.button.secondary {
+  background: transparent;
+  color: var(--dl-text);
+}
+
+.glyph-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+}
+
+.glyph-tile {
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+  min-height: 128px;
+  border: 1px solid var(--dl-border);
+  padding: 14px;
+  background: rgba(32, 32, 33, 0.72);
+  color: var(--dl-muted);
+}
+
+.onboarding-form {
+  display: grid;
+  gap: 16px;
+  max-width: 760px;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.field input,
+.field select {
+  min-height: 44px;
+  border: 1px solid var(--dl-border);
+  background: var(--dl-raised);
+  color: var(--dl-text);
+  padding: 0 12px;
+}
+
+@media (max-width: 820px) {
+  .shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    border-right: 0;
+    border-bottom: 1px solid var(--dl-border);
+  }
+
+  .main {
+    padding: 24px 18px;
+  }
+}

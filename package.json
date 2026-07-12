@@ -1,0 +1,21 @@
+{
+  "name": "dream-logic",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Dream Logic astrology ecosystem monorepo foundation.",
+  "packageManager": "npm@10.0.0",
+  "scripts": {
+    "dev": "npm --workspace @dream-logic/web run dev",
+    "build": "npm --workspace @dream-logic/web run build",
+    "lint": "npm --workspaces --if-present run lint",
+    "typecheck": "npm --workspaces --if-present run typecheck",
+    "test": "node tests/glyph-contract.test.mjs"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=20"
+  }
+}
