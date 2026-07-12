@@ -1,6 +1,6 @@
-import { ModulePage } from "../../components/ModulePage";
-import { getProductModule } from "../../lib/product-modules";
+import { AppShell } from "../../components/AppShell";
+import { ProductWorkbench } from "../../components/ProductWorkbench";
 
 export default function PrivacyPage() {
-  return <ModulePage module={getProductModule("privacy")} />;
+  return <AppShell><p className="eyebrow">Control and consent</p><h1 className="headline">Privacy centre</h1><ProductWorkbench initialTab="Privacy" /></AppShell>;
 }

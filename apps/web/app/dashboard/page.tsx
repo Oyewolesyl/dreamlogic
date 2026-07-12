@@ -1,6 +1,6 @@
-import { ModulePage } from "../../components/ModulePage";
-import { getProductModule } from "../../lib/product-modules";
+import { AppShell } from "../../components/AppShell";
+import { ProductWorkbench } from "../../components/ProductWorkbench";
 
 export default function DashboardPage() {
-  return <ModulePage module={getProductModule("dashboard")} />;
+  return <AppShell><p className="eyebrow">Workspace home</p><h1 className="headline">Dashboard</h1><ProductWorkbench initialTab="Dashboard" /></AppShell>;
 }

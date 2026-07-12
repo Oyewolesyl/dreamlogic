@@ -1,6 +1,6 @@
-import { ModulePage } from "../../components/ModulePage";
-import { getProductModule } from "../../lib/product-modules";
+import { AppShell } from "../../components/AppShell";
+import { ProductWorkbench } from "../../components/ProductWorkbench";
 
 export default function ChartsPage() {
-  return <ModulePage module={getProductModule("charts")} />;
+  return <AppShell><p className="eyebrow">Deterministic charts</p><h1 className="headline">Chart studio</h1><ProductWorkbench initialTab="Charts" /></AppShell>;
 }

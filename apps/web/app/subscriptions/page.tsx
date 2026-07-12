@@ -1,6 +1,6 @@
-import { ModulePage } from "../../components/ModulePage";
-import { getProductModule } from "../../lib/product-modules";
+import { AppShell } from "../../components/AppShell";
+import { ProductWorkbench } from "../../components/ProductWorkbench";
 
 export default function SubscriptionsPage() {
-  return <ModulePage module={getProductModule("subscriptions")} />;
+  return <AppShell><p className="eyebrow">Entitlements</p><h1 className="headline">Subscriptions</h1><ProductWorkbench initialTab="Subscriptions" /></AppShell>;
 }

@@ -1,6 +1,6 @@
-import { ModulePage } from "../../components/ModulePage";
-import { getProductModule } from "../../lib/product-modules";
+import { AppShell } from "../../components/AppShell";
+import { ProductWorkbench } from "../../components/ProductWorkbench";
 
 export default function TransitsPage() {
-  return <ModulePage module={getProductModule("transits")} />;
+  return <AppShell><p className="eyebrow">Timing calendar</p><h1 className="headline">Transit centre</h1><ProductWorkbench initialTab="Transits" /></AppShell>;
 }

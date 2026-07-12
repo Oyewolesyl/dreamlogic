@@ -1,6 +1,6 @@
-import { ModulePage } from "../../components/ModulePage";
-import { getProductModule } from "../../lib/product-modules";
+import { AppShell } from "../../components/AppShell";
+import { ProductWorkbench } from "../../components/ProductWorkbench";
 
 export default function RelationshipsPage() {
-  return <ModulePage module={getProductModule("relationships")} />;
+  return <AppShell><p className="eyebrow">Consent-first comparison</p><h1 className="headline">Relationship astrology</h1><ProductWorkbench initialTab="Relationships" /></AppShell>;
 }

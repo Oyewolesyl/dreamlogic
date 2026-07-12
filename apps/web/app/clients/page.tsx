@@ -1,6 +1,6 @@
-import { ModulePage } from "../../components/ModulePage";
-import { getProductModule } from "../../lib/product-modules";
+import { AppShell } from "../../components/AppShell";
+import { ProductWorkbench } from "../../components/ProductWorkbench";
 
 export default function ClientsPage() {
-  return <ModulePage module={getProductModule("clients")} />;
+  return <AppShell><p className="eyebrow">Professional practice</p><h1 className="headline">Client workspace</h1><ProductWorkbench initialTab="Clients" /></AppShell>;
 }

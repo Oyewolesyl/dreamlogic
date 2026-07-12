@@ -1,5 +1,6 @@
 import { AppShell } from "../components/AppShell";
 import { DreamGlyph } from "../components/DreamGlyph";
+import { ProductWorkbench } from "../components/ProductWorkbench";
 
 const modules = [
   ["birth-profile", "Birth profiles", "Capture birth data with certainty, location, time-zone, and house-system context."],
@@ -34,6 +35,7 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+      <ProductWorkbench initialTab="Dashboard" />
     </AppShell>
   );
 }
