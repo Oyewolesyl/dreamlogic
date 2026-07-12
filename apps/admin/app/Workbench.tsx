@@ -4,14 +4,14 @@ import { useMemo, useState } from "react";
 import { calculatePlacements, type BirthProfile, type Placement } from "./chart";
 
 const sections = [
-  { id: "dashboard", label: "Overview", detail: "Today, profiles, and next work" },
-  { id: "profile", label: "Birth Profile", detail: "Onboarding and time certainty" },
-  { id: "chart", label: "Chart Studio", detail: "Calculated natal placements" },
-  { id: "timing", label: "Timing", detail: "Transits, stations, and notes" },
-  { id: "journal", label: "Journal", detail: "Reflections tied to chart context" },
-  { id: "clients", label: "Practice", detail: "Clients, consent, and prep" },
-  { id: "reports", label: "Reports", detail: "Export-ready interpretation" },
-  { id: "privacy", label: "Privacy", detail: "Control access and data" }
+  { id: "dashboard", label: "Today", detail: "Current work", group: "Start" },
+  { id: "profile", label: "Birth Data", detail: "Date, time, place", group: "Chart work" },
+  { id: "chart", label: "Natal Chart", detail: "Placements and balance", group: "Chart work" },
+  { id: "timing", label: "Timing", detail: "Transits and aspects", group: "Chart work" },
+  { id: "journal", label: "Journal", detail: "Notes and observations", group: "Interpretation" },
+  { id: "clients", label: "Clients", detail: "Practice records", group: "Practice" },
+  { id: "reports", label: "Reports", detail: "Client-ready output", group: "Practice" },
+  { id: "privacy", label: "Data", detail: "Export and permissions", group: "Practice" }
 ] as const;
 
 type SectionId = (typeof sections)[number]["id"];
@@ -52,6 +52,7 @@ export function Workbench() {
   const topAspects = useMemo(() => getTopAspects(placements), [placements]);
   const moon = placements.find((placement) => placement.body === "Moon");
   const mercury = placements.find((placement) => placement.body === "Mercury");
+  const navGroups = Array.from(new Set(sections.map((section) => section.group)));
 
   const saveJournal = () => {
     if (!draft.title.trim() || !draft.body.trim()) return;
@@ -66,61 +67,89 @@ export function Workbench() {
   };
 
   return (
-    <section className="product-shell" id="workspace">
-      <aside className="product-nav" aria-label="Dream Logic workspace sections">
-        <a className="nav-logo" href="#workspace" aria-label="Dream Logic workspace">
+    <section className="application-frame" id="workspace">
+      <header className="suite-header">
+        <a className="suite-logo" href="#workspace" aria-label="Dream Logic">
           <img alt="Dream Logic" src="/brand/logomain.svg" />
         </a>
-        <div className="nav-list">
-          {sections.map((section) => (
-            <button
-              key={section.id}
-              className="nav-button"
-              data-active={active === section.id}
-              onClick={() => setActive(section.id)}
-              type="button"
-            >
-              <strong>{section.label}</strong>
-              <small>{section.detail}</small>
-            </button>
-          ))}
+        <div className="suite-summary">
+          <p className="kicker">Astrology workspace</p>
+          <h1>{profile.name}</h1>
+          <p>{profile.birthDate} / {profile.birthTime} / {profile.locationLabel}</p>
         </div>
-      </aside>
+        <div className="suite-actions" aria-label="Primary workflow shortcuts">
+          <button type="button" onClick={() => setActive("profile")}>Edit birth data</button>
+          <button type="button" onClick={() => setActive("chart")}>Open chart</button>
+          <button type="button" onClick={() => setActive("reports")}>Prepare report</button>
+        </div>
+      </header>
 
-      <section className="product-stage" aria-live="polite">
-        <header className="stage-heading">
-          <p className="kicker">{activeSection.detail}</p>
-          <h2>{activeSection.label}</h2>
-        </header>
+      <div className="product-shell">
+        <aside className="product-nav" aria-label="Dream Logic workspace sections">
+          {navGroups.map((group) => (
+            <div className="nav-group" key={group}>
+              <p>{group}</p>
+              <div className="nav-list">
+                {sections.filter((section) => section.group === group).map((section) => (
+                  <button
+                    key={section.id}
+                    className="nav-button"
+                    data-active={active === section.id}
+                    onClick={() => setActive(section.id)}
+                    type="button"
+                  >
+                    <strong>{section.label}</strong>
+                    <small>{section.detail}</small>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </aside>
 
-        {active === "dashboard" && (
-          <div className="dashboard-grid">
-            <Metric label="Profiles" value="1" body="The active chart is ready for natal reading and report generation." />
-            <Metric label="Placements" value={String(placements.length)} body="Sun through Pluto are calculated from the current birth profile." />
-            <Metric label="Journal" value={String(journal.length)} body="Notes can be kept beside timing and consultation work." />
-            <Metric label="Clients" value={String(clients.length)} body="Practice records stay separate from private chart notes." />
-            <article className="feature-panel chart-summary">
-              <div>
-                <p className="kicker">Current chart</p>
-                <h3>{profile.name}</h3>
-                <p>{profile.birthDate} at {profile.birthTime} in {profile.locationLabel}</p>
-              </div>
-              <div className="summary-rows">
-                <SummaryRow label="Moon" value={moon ? formatPlacement(moon) : "Calculating"} />
-                <SummaryRow label="Mercury" value={mercury ? formatPlacement(mercury) : "Calculating"} />
-                <SummaryRow label="Time certainty" value={profile.birthTimeCertainty.replaceAll("_", " ")} />
-              </div>
-            </article>
-            <article className="feature-panel constellation-card">
-              <img alt="Gemini constellation on a star field" src="/brand/gemini-constellation.jpg" />
-              <div>
-                <p className="kicker">Reading flow</p>
-                <h3>Calculate, observe, interpret, export.</h3>
-                <p>Every section supports the same client journey instead of scattering chart work across separate tools.</p>
-              </div>
-            </article>
-          </div>
-        )}
+        <section className="product-stage" aria-live="polite">
+          <header className="stage-heading">
+            <div>
+              <p className="kicker">{activeSection.group}</p>
+              <h2>{activeSection.label}</h2>
+            </div>
+            <p>{activeSection.detail}</p>
+          </header>
+
+          {active === "dashboard" && (
+            <div className="dashboard-grid">
+              <article className="feature-panel next-step">
+                <p className="kicker">Workflow</p>
+                <h3>Start with the chart. Finish with the report.</h3>
+                <ol className="workflow-list">
+                  <li>Confirm birth data</li>
+                  <li>Read natal placements</li>
+                  <li>Check timing and aspects</li>
+                  <li>Save notes</li>
+                  <li>Prepare report</li>
+                </ol>
+                <div className="inline-actions">
+                  <button type="button" onClick={() => setActive("profile")}>Birth data</button>
+                  <button type="button" onClick={() => setActive("chart")}>Natal chart</button>
+                </div>
+              </article>
+              <Metric label="Profiles" value="1" body="Active chart loaded." />
+              <Metric label="Placements" value={String(placements.length)} body="Sun through Pluto calculated." />
+              <Metric label="Notes" value={String(journal.length)} body="Interpretation notes saved." />
+              <article className="feature-panel chart-summary">
+                <div>
+                  <p className="kicker">Active chart</p>
+                  <h3>{profile.name}</h3>
+                  <p>{profile.birthDate} at {profile.birthTime} in {profile.locationLabel}</p>
+                </div>
+                <div className="summary-rows">
+                  <SummaryRow label="Moon" value={moon ? formatPlacement(moon) : "Calculating"} />
+                  <SummaryRow label="Mercury" value={mercury ? formatPlacement(mercury) : "Calculating"} />
+                  <SummaryRow label="Time certainty" value={profile.birthTimeCertainty.replaceAll("_", " ")} />
+                </div>
+              </article>
+            </div>
+          )}
 
         {active === "profile" && (
           <div className="form-panel">
@@ -232,7 +261,8 @@ export function Workbench() {
             <Info title="Subscriptions" body={plans.map(([name]) => name).join(" / ")} />
           </div>
         )}
-      </section>
+        </section>
+      </div>
     </section>
   );
 }
