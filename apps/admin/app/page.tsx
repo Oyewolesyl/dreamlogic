@@ -1,34 +1,29 @@
-const productLanes = [
+import { Workbench } from "./Workbench";
+
+const suites = [
   {
-    title: "Charts",
-    items: ["Birth profiles", "Natal snapshots", "Aspects", "Time resolution", "House systems"]
+    title: "Chart Studio",
+    items: ["Birth profiles", "Natal placements", "Major aspects", "Element balance", "Unknown-time safeguards"]
+  },
+  {
+    title: "Timing",
+    items: ["Transit watch", "Calendar planning", "Stations", "Ingresses", "Journal links"]
+  },
+  {
+    title: "Relationships",
+    items: ["Synastry", "Composite work", "Consent", "Shared timeline", "Relationship reports"]
   },
   {
     title: "Practice",
-    items: ["Practitioners", "Clients", "Intake", "Appointments", "Private notes"]
-  },
-  {
-    title: "Reports",
-    items: ["Natal", "Transit", "Year ahead", "Relationship", "Consultation"]
-  },
-  {
-    title: "Platform",
-    items: ["Users", "Subscriptions", "AI usage", "Privacy exports", "Audit logs"]
+    items: ["Clients", "Private notes", "Consultation prep", "Reports", "Privacy controls"]
   }
 ];
 
-const operations = [
-  ["Calculation health", "Ephemeris provider pending", "Provider contract is present; production key/license required."],
-  ["Billing webhooks", "Stripe test mode", "Checkout and entitlement sync are the next server route."],
-  ["Glyph management", "33 glyphs", "Grid-based symbol library is available in the shared package."],
-  ["Privacy centre", "Consent-first", "Journal, client, relationship, and AI context data stay separated."]
-];
-
-export default function AdminHome() {
+export default function DreamLogicApp() {
   return (
-    <main className="admin-shell">
+    <main className="app-shell">
       <section className="brand-stage">
-        <img alt="Dream Logic Astrology suite" className="admin-logo" src="/brand/fulldarklogo.svg" />
+        <img alt="Dream Logic Astrology suite" className="app-logo" src="/brand/fulldarklogo.svg" />
         <div className="symbol-strip" aria-hidden="true">
           <span />
           <span />
@@ -40,27 +35,16 @@ export default function AdminHome() {
 
       <Workbench />
 
-      <section className="console-grid" aria-label="Dream Logic modules">
-        {productLanes.map((lane) => (
-          <article className="lane" key={lane.title}>
-            <p>{lane.title}</p>
+      <section className="suite-grid" aria-label="Dream Logic astrology suite">
+        {suites.map((suite) => (
+          <article className="suite-card" key={suite.title}>
+            <p>{suite.title}</p>
             <ul>
-              {lane.items.map((item) => <li key={item}>{item}</li>)}
+              {suite.items.map((item) => <li key={item}>{item}</li>)}
             </ul>
-          </article>
-        ))}
-      </section>
-
-      <section className="ops-grid" aria-label="Operational status">
-        {operations.map(([title, status, detail]) => (
-          <article className="ops-card" key={title}>
-            <span>{status}</span>
-            <h2>{title}</h2>
-            <p>{detail}</p>
           </article>
         ))}
       </section>
     </main>
   );
 }
-import { Workbench } from "./Workbench";
