@@ -123,6 +123,11 @@ the web app will need:
 
 ```txt
 STRIPE_WEBHOOK_SECRET=whsec_your_secret
+STRIPE_PRICE_SEEKER=price_your_seeker_price
+STRIPE_PRICE_DEPTH=price_your_depth_price
+STRIPE_PRICE_PRACTITIONER=price_your_practitioner_price
+STRIPE_PRICE_PRACTICE=price_your_practice_price
+STRIPE_PRICE_RESEARCH=price_your_research_price
 ```
 
 ## 7. supabase database
@@ -157,6 +162,11 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-public-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-private-service-role-key
 STRIPE_SECRET_KEY=sk_live_your_stripe_secret_key
 STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
+STRIPE_PRICE_SEEKER=price_your_seeker_price
+STRIPE_PRICE_DEPTH=price_your_depth_price
+STRIPE_PRICE_PRACTITIONER=price_your_practitioner_price
+STRIPE_PRICE_PRACTICE=price_your_practice_price
+STRIPE_PRICE_RESEARCH=price_your_research_price
 NEXT_PUBLIC_LANDING_URL=https://your-landing-domain
 ```
 
@@ -192,10 +202,8 @@ this admin already reads stripe customers, subscriptions, payments, active subsc
 
 ## 12. what still needs credentials before it can be live
 
-these cannot be finished without your private provider values:
+these need the private provider values to work live:
 
-- live stripe checkout for paid plans.
-- stripe webhook verification.
 - supabase account storage.
 - user chart persistence.
 - journal persistence.
