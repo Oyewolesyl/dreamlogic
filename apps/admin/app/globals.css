@@ -764,3 +764,51 @@ button {
     text-align: left;
   }
 }
+
+.admin-login {
+  width: min(520px, calc(100vw - 32px));
+  margin: 10vh auto;
+  border: 1px solid var(--dl-line);
+  background: rgba(30, 30, 31, .94);
+  padding: clamp(22px, 5vw, 44px);
+}
+
+.admin-login img {
+  width: min(260px, 100%);
+  border: 1px solid rgba(245, 194, 28, .4);
+  padding: 16px;
+}
+
+.admin-login form {
+  display: grid;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.admin-login label {
+  display: grid;
+  gap: 8px;
+  color: var(--dl-copy);
+  font-weight: 800;
+}
+
+.admin-login input {
+  border: 1px solid var(--dl-line);
+  background: #111;
+  color: var(--dl-paper);
+  min-height: 48px;
+  padding: 12px 14px;
+}
+
+.admin-login button {
+  border: 1px solid rgba(245, 194, 28, .65);
+  background: var(--dl-gold);
+  color: #090909;
+  min-height: 48px;
+  font-weight: 900;
+}
+
+.login-error {
+  color: var(--dl-red);
+  font-weight: 800;
+}
