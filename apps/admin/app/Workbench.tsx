@@ -21,14 +21,14 @@ type BillingSummary = {
 };
 
 const sections: Array<[AdminSection, string, string]> = [
-  ["overview", "overview", "current state across dream logic"],
-  ["surfaces", "sites", "landing, web app, and admin links"],
-  ["billing", "buyers", "plans, purchases, and subscriptions"],
-  ["analytics", "analytics", "traffic, conversion, and product signals"],
-  ["users", "users", "accounts, access, and subscriptions"],
-  ["pricing", "pricing", "plans and revenue model"],
-  ["content", "content", "reports, glossary, media, and copy"],
-  ["events", "events", "product events to track"]
+  ["overview", "overview", "status across the business"],
+  ["surfaces", "sites", "live urls, repos, deployments"],
+  ["billing", "buyers", "customers, payments, subscriptions"],
+  ["analytics", "analytics", "traffic and conversion checks"],
+  ["users", "users", "accounts and plan access"],
+  ["pricing", "pricing", "tiers and feature limits"],
+  ["content", "content", "brand, glossary, report copy"],
+  ["events", "events", "product actions to track"]
 ];
 
 const plans = [
@@ -53,7 +53,7 @@ const events = [
 const contentAreas = [
   ["brand assets", "logos, videos, constellation imagery, report preview"],
   ["glossary", "natal chart, element balance, modality balance, retrograde, time certainty"],
-  ["report copy", "birth profile, interpretation, practice notes"],
+  ["report copy", "birth profile, interpretation, practice notes, exports"],
   ["pricing copy", "plan names, price points, and feature access"],
   ["media order", "ad one stands alone; ad two opens when paired"]
 ];
@@ -127,7 +127,7 @@ export function Workbench() {
       <main className="admin-main">
         <header className="admin-header">
           <div>
-            <p>dream logic control panel</p>
+            <p>private operations</p>
             <h1>{activeLabel}</h1>
           </div>
           <div className="admin-actions">
@@ -142,9 +142,9 @@ export function Workbench() {
             <Metric value="6" label="plans" body="free through research pricing is represented." />
             <Metric value={String(billing?.totals.activeSubscriptions ?? 0)} label="active subs" body={billing?.connected ? "live stripe subscription count." : "connect stripe to load real buyers."} />
             <article className="admin-card wide">
-              <p className="eyebrow">operating model</p>
-              <h2>landing sells, web app serves, admin manages</h2>
-              <p>the public sites link to each other. the admin remains private and gives you one place to check links, pricing, analytics targets, content areas, and product events.</p>
+              <p className="eyebrow">status</p>
+              <h2>one private place for revenue, product, and deployment checks</h2>
+              <p>open the live sites, verify plan pricing, read stripe buyers, and keep the product event list in one private screen. the landing and web app link to each other; this admin stays separate.</p>
             </article>
           </div>
         )}
@@ -175,7 +175,7 @@ export function Workbench() {
             <article className="admin-card wide">
               <p className="eyebrow">billing connection</p>
               <h2>{billing?.connected ? "stripe is connected" : "stripe is not connected yet"}</h2>
-              <p>{billing?.connected ? "customers, subscriptions, and payments below are live stripe records." : "add STRIPE_SECRET_KEY to the admin vercel project to show actual buyers, purchases, and subscriptions here."}</p>
+              <p>{billing?.connected ? "customers, subscriptions, and payments below are live stripe records." : "add stripe_secret_key to the admin vercel project to show actual buyers, purchases, and subscriptions here."}</p>
               {billingError && <p>{billingError}</p>}
             </article>
             <DataTable
@@ -214,9 +214,9 @@ export function Workbench() {
         {active === "analytics" && (
           <div className="admin-grid">
             <article className="admin-card wide">
-              <p className="eyebrow">analytics setup</p>
-              <h2>what this admin should watch</h2>
-              <p>traffic should be read by surface: landing visits, app opens, pricing clicks, chart starts, report preparation, account attempts, and plan selection.</p>
+              <p className="eyebrow">measurement</p>
+              <h2>watch the path from visitor to paid workspace</h2>
+              <p>read traffic by surface: landing visits, app opens, pricing clicks, saved birth data, chart opens, report preparation, account attempts, and plan selection.</p>
               <div className="link-row">
                 <a href="https://vercel.com/dashboard">open vercel analytics</a>
                 <button type="button" onClick={() => setActive("events")}>view event map</button>
@@ -235,8 +235,8 @@ export function Workbench() {
             <Metric value="practice" label="team tier" body="client records and shared workflows." />
             <article className="admin-card wide">
               <p className="eyebrow">access model</p>
-              <h2>accounts belong in the web app, oversight belongs here</h2>
-              <p>this admin panel is structured for subscription oversight, support checks, access review, and operational links. production account storage still needs the chosen auth and database providers.</p>
+              <h2>review who can use what, then resolve support issues fast</h2>
+              <p>this panel is organized for account lookup, plan status, subscription changes, support checks, and access review. the live account table appears here once the production database is connected.</p>
             </article>
           </div>
         )}
