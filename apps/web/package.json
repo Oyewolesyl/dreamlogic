@@ -10,11 +10,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@dream-logic/astrology-domain": "workspace:*",
-    "@dream-logic/brand": "workspace:*",
-    "@dream-logic/design-tokens": "workspace:*",
-    "@dream-logic/glyphs": "workspace:*",
-    "@dream-logic/subscriptions": "workspace:*",
+    "@dream-logic/astrology-domain": "file:../../packages/astrology-domain",
+    "@dream-logic/brand": "file:../../packages/brand",
+    "@dream-logic/design-tokens": "file:../../packages/design-tokens",
+    "@dream-logic/glyphs": "file:../../packages/glyphs",
+    "@dream-logic/subscriptions": "file:../../packages/subscriptions",
     "framer-motion": "^11.0.0",
     "next": "^15.0.0",
     "react": "^19.0.0",
