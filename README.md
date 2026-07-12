@@ -1,31 +1,51 @@
-# Dream Logic
+# dream logic admin
 
-Dream Logic is a production-oriented astrology workspace foundation built around the supplied brand direction: stacked wordmark, modular symbol row, dark/light lockups, and a proprietary grid-derived glyph language.
+private admin dashboard for dream logic.
 
-This first build establishes the product architecture, design system, glyph library, application shells, onboarding model, initial database schema, calculation-domain boundaries, and subscription entitlements. It deliberately avoids fake astrology output: deterministic calculations are represented as provider contracts until a licensed ephemeris provider is wired in.
+## purpose
 
-## Structure
+this repo is the internal admin surface. it should not be used as the public landing page or the user-facing web app.
 
-```text
-apps/web                 Next.js App Router shell
-apps/admin               Admin app placeholder
-apps/astrology-api       Python/FastAPI service placeholder
-packages/brand           Logo lockups, muse system, brand rules
-packages/design-tokens   Theme and typography tokens
-packages/glyphs          Dream Logic glyph operating system
-packages/astrology-domain Calculation contracts and fixtures
-packages/subscriptions   Plan and entitlement service
-supabase/migrations      Initial data model and RLS policies
-docs                     Product, brand, glyph, billing, engine docs
+the public product has been split into separate repos:
+
+- landing page: `https://github.com/Oyewolesyl/dreamlogic-landingpage.git`
+- web app: `https://github.com/Oyewolesyl/dreamlogic-webapp.git`
+- admin dashboard: `https://github.com/Oyewolesyl/dreamlogic.git`
+
+## password protection
+
+the admin dashboard is gated before the dashboard renders.
+
+set these environment variables in vercel:
+
+```txt
+DREAMLOGIC_ADMIN_PASSWORD=your password
+DREAMLOGIC_ADMIN_SECRET=any long random secret
 ```
 
-## Local Setup
+do not commit the password or secret to git.
 
-1. Install dependencies with `npm install`.
-2. Copy `.env.example` to `.env.local` and fill Supabase, Stripe, Resend, Sentry, PostHog, and AI provider values.
-3. Run `npm run dev`.
-4. Run `npm run test`, `npm run typecheck`, and `npm run build` before deployment.
+## local setup
 
-## Principle
+from the admin app:
 
-AI can explain verified chart context, but it must not calculate placements, invent houses, infer unknown birth times, or expose private chart/journal/client data.
+```bash
+cd apps/admin
+npm install
+npm run dev
+```
+
+production build:
+
+```bash
+cd apps/admin
+npm run build
+```
+
+## deployment
+
+deploy this repo as the private admin dashboard only. do not link to it from the landing page or web app.
+
+## current boundary
+
+admin remains isolated from the public surfaces. landing and web app can link to each other, but neither should expose the admin dashboard.
