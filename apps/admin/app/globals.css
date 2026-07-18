@@ -1145,3 +1145,243 @@ button {
     grid-template-columns: repeat(2, minmax(118px, 1fr));
   }
 }
+
+/* private admin console refinement */
+.admin-frame {
+  gap: 16px;
+  padding: clamp(12px, 2vw, 22px);
+  background:
+    radial-gradient(circle at 18% 0%, rgba(18, 84, 168, .16), transparent 34%),
+    linear-gradient(180deg, rgba(9, 9, 10, .96), rgba(15, 15, 16, .985)),
+    url("/brand/gemini-constellation-wide.jpg");
+  background-position: top center;
+  background-size: cover;
+}
+
+.admin-sidebar,
+.admin-main,
+.admin-card {
+  border-color: rgba(248, 245, 238, .12);
+  background: rgba(18, 18, 19, .92);
+  box-shadow: none;
+}
+
+.admin-sidebar {
+  top: clamp(12px, 2vw, 22px);
+  grid-template-columns: 156px minmax(0, 1fr);
+  gap: 14px;
+  padding: 12px;
+  backdrop-filter: blur(18px);
+}
+
+.admin-brand {
+  align-content: center;
+  border-right-color: rgba(248, 245, 238, .1);
+}
+
+.admin-brand img {
+  width: 104px;
+  max-height: 48px;
+}
+
+.admin-sidebar nav {
+  grid-template-columns: repeat(8, minmax(110px, 1fr));
+  gap: 7px;
+}
+
+.admin-sidebar button {
+  min-height: 64px;
+  border-color: rgba(248, 245, 238, .07);
+  background: rgba(248, 245, 238, .025);
+  transition: border-color .18s ease, background .18s ease, transform .18s ease;
+}
+
+.admin-sidebar button:hover {
+  border-color: rgba(136, 172, 236, .38);
+  background: rgba(136, 172, 236, .055);
+}
+
+.admin-sidebar button.active {
+  border-color: rgba(245, 194, 28, .42);
+  background:
+    linear-gradient(90deg, rgba(245, 194, 28, .11), rgba(136, 172, 236, .055));
+}
+
+.admin-sidebar button.active span {
+  color: var(--dl-gold);
+}
+
+.admin-main {
+  min-height: calc(100vh - 132px);
+  padding: clamp(16px, 2.2vw, 24px);
+}
+
+.admin-header {
+  align-items: center;
+  margin-bottom: 18px;
+  padding-bottom: 16px;
+}
+
+.admin-header h1 {
+  font-size: clamp(1.8rem, 3.2vw, 3.4rem);
+  letter-spacing: 0;
+}
+
+.admin-actions a,
+.link-row a,
+.link-row button {
+  min-height: 40px;
+  border-color: rgba(248, 245, 238, .16);
+  background: rgba(248, 245, 238, .035);
+  color: var(--dl-paper);
+}
+
+.admin-actions a:first-child,
+.link-row a:first-child {
+  border-color: rgba(245, 194, 28, .45);
+  background: rgba(245, 194, 28, .1);
+  color: var(--dl-gold);
+}
+
+.admin-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.admin-card {
+  padding: clamp(14px, 1.7vw, 20px);
+}
+
+.admin-card h2 {
+  font-size: clamp(1.08rem, 1.8vw, 1.65rem);
+}
+
+.metric {
+  min-height: 132px;
+  border-top-color: rgba(136, 172, 236, .3);
+}
+
+.metric strong {
+  color: var(--dl-paper);
+  font-size: clamp(1.65rem, 2.8vw, 2.4rem);
+}
+
+.metric span {
+  color: var(--dl-gold);
+}
+
+.setup-card {
+  background:
+    linear-gradient(180deg, rgba(22, 22, 23, .96), rgba(12, 12, 13, .96));
+}
+
+.setup-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.setup-list div {
+  border: 1px solid rgba(248, 245, 238, .1);
+  background: rgba(248, 245, 238, .028);
+  padding: 13px;
+}
+
+.setup-list strong,
+.setup-list span {
+  display: block;
+  text-transform: lowercase;
+}
+
+.setup-list strong {
+  color: var(--dl-paper);
+  font-size: 1rem;
+}
+
+.setup-list span {
+  margin-top: 4px;
+  color: var(--dl-blue-soft);
+  font-size: .78rem;
+  font-weight: 850;
+}
+
+.setup-list p {
+  margin: 10px 0 0;
+  color: var(--dl-copy);
+  font-size: .88rem;
+  line-height: 1.45;
+}
+
+.surface-card {
+  grid-template-columns: minmax(120px, 180px) minmax(0, 1fr) minmax(220px, auto);
+}
+
+.data-row {
+  min-height: 42px;
+  align-items: center;
+}
+
+.admin-login {
+  background:
+    linear-gradient(180deg, rgba(24, 24, 26, .97), rgba(11, 11, 12, .97));
+  box-shadow: 0 28px 80px rgba(0, 0, 0, .42);
+}
+
+@media (max-width: 1120px) {
+  .admin-sidebar {
+    position: static;
+    grid-template-columns: 1fr;
+  }
+
+  .admin-brand {
+    border-right: 0;
+  }
+
+  .admin-grid,
+  .setup-list,
+  .surface-card,
+  .data-row,
+  .event-card {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .admin-frame {
+    padding: 10px;
+  }
+
+  .admin-main {
+    padding: 14px;
+  }
+
+  .admin-sidebar nav {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .admin-sidebar button {
+    flex: 0 0 146px;
+  }
+
+  .admin-header {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .admin-actions,
+  .link-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .admin-actions a,
+  .link-row a,
+  .link-row button {
+    justify-content: center;
+    text-align: center;
+  }
+}

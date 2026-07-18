@@ -58,6 +58,13 @@ const contentAreas = [
   ["media order", "ad one stands alone; ad two opens when paired"]
 ];
 
+const setupChecks = [
+  ["database", "supabase", "accounts, profiles, chart snapshots, journals, reports, and workspace restore"],
+  ["payments", "stripe", "buyers, subscriptions, invoices, price ids, and webhook events"],
+  ["hypnos ai", "openai", "chart/report explanation layer for the web app"],
+  ["analytics", "vercel", "landing traffic, app opens, pricing clicks, and product usage"]
+];
+
 export function Workbench() {
   const [active, setActive] = useState<AdminSection>("overview");
   const [billing, setBilling] = useState<BillingSummary | null>(null);
@@ -143,8 +150,20 @@ export function Workbench() {
             <Metric value={String(billing?.totals.activeSubscriptions ?? 0)} label="active subs" body={billing?.connected ? "live stripe subscription count." : "connect stripe to load real buyers."} />
             <article className="admin-card wide">
               <p className="eyebrow">status</p>
-              <h2>one private place for revenue, product, and deployment checks</h2>
-              <p>open the live sites, verify plan pricing, read stripe buyers, and keep the product event list in one private screen. the landing and web app link to each other; this admin stays separate.</p>
+              <h2>manage the business side without opening the public product</h2>
+              <p>use this private console to check live surfaces, buyer activity, subscription health, pricing, event tracking, and setup gaps. the landing and web app link to each other; this admin stays separate.</p>
+            </article>
+            <article className="admin-card wide setup-card">
+              <p className="eyebrow">launch checklist</p>
+              <div className="setup-list">
+                {setupChecks.map(([name, provider, detail]) => (
+                  <div key={name}>
+                    <strong>{name}</strong>
+                    <span>{provider}</span>
+                    <p>{detail}</p>
+                  </div>
+                ))}
+              </div>
             </article>
           </div>
         )}
@@ -216,7 +235,7 @@ export function Workbench() {
             <article className="admin-card wide">
               <p className="eyebrow">measurement</p>
               <h2>watch the path from visitor to paid workspace</h2>
-              <p>read traffic by surface: landing visits, app opens, pricing clicks, saved birth data, chart opens, report preparation, account attempts, and plan selection.</p>
+              <p>read traffic by surface: landing visits, app opens, pricing clicks, saved birth data, chart opens, hypnos asks, report preparation, account attempts, and plan selection.</p>
               <div className="link-row">
                 <a href="https://vercel.com/dashboard">open vercel analytics</a>
                 <button type="button" onClick={() => setActive("events")}>view event map</button>
